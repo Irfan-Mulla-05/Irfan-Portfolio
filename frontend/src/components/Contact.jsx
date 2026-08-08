@@ -36,7 +36,7 @@ const Contact = () => {
     setLoading(true);
     setStatus('Sending...');
     try {
-      const { data } = await axios.post('https://irfan-portfolio-mrvf.onrender.com/', form);
+      const { data } = await axios.post('https://irfan-portfolio-mrvf.onrender.com/api/contact', form);
       setStatus(data.message || 'Message sent successfully!');
       setForm({ name: '', email: '', message: '' });
     } catch (err) {

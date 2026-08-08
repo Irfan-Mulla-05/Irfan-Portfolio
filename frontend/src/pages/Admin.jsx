@@ -32,7 +32,7 @@ const Admin = () => {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('https://irfan-portfolio-mrvf.onrender.com/');
+      const res = await axios.get('https://irfan-portfolio-mrvf.onrender.com/api/visitor');
       setStats(res.data);
     } catch (err) {
       console.error("Error fetching stats", err);
