@@ -15,7 +15,7 @@ const VisitorPopup = () => {
 
   const handleSubmit = async (skipped = false) => {
     try {
-      await axios.post('http://localhost:5000/api/visitor', { name, role: skipped ? null : role, skipped });
+      await axios.post('https://irfan-portfolio-37il.onrender.com/', { name, role: skipped ? null : role, skipped });
     } catch { /* silent */ }
     setIsOpen(false);
   };
