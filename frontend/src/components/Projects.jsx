@@ -8,7 +8,7 @@ const Projects = () => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    axios.get('https://irfan-portfolio-37il.onrender.com/')
+    axios.get('https://irfan-portfolio-mrvf.onrender.com/')
       .then(res => setProjects(res.data))
       .catch(() => setProjects([
         { _id: '1', title: 'KrishiRakshak AI', description: 'AI-driven crop disease detection and smart farm management system built for RIT Ideathon 2025.', tech: ['React', 'Node.js', 'Python', 'MongoDB'], link: '#', github: '#' },
