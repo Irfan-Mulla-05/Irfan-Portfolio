@@ -9,15 +9,37 @@ const VisitorPopup = () => {
   const [skipReady, setSkipReady] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => setIsOpen(true), 300);
-    setTimeout(() => setSkipReady(true), 5000);
+    // Open popup after 300ms
+    const openTimer = setTimeout(() => {
+      setIsOpen(true);
+    }, 300);
+
+    // Enable Skip button after 5 seconds
+    const skipTimer = setTimeout(() => {
+      setSkipReady(true);
+    }, 5000);
+
+    // Cleanup timers
+    return () => {
+      clearTimeout(openTimer);
+      clearTimeout(skipTimer);
+    };
   }, []);
 
-  const handleSubmit = async (skipped = false) => {
-    try {
-      await axios.post('https://irfan-portfolio-mrvf.onrender.com/api/visitor', { name, role: skipped ? null : role, skipped });
-    } catch { /* silent */ }
+  const handleSubmit = (skipped = false) => {
+    // Close popup immediately
     setIsOpen(false);
+
+    // Send visitor information in background
+    axios
+      .post('https://irfan-portfolio-mrvf.onrender.com/api/visitor', {
+        name: skipped ? null : name,
+        role: skipped ? null : role,
+        skipped,
+      })
+      .catch(() => {
+        // Silent failure
+      });
   };
 
   return (
@@ -30,69 +52,139 @@ const VisitorPopup = () => {
           className="fixed inset-0 z-[100] flex items-center justify-center bg-[#030712]/90 backdrop-blur-xl px-4"
         >
           <motion.div
-            initial={{ scale: 0.95, y: 16, opacity: 0 }}
-            animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.95, y: 16, opacity: 0 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            initial={{
+              scale: 0.95,
+              y: 16,
+              opacity: 0,
+            }}
+            animate={{
+              scale: 1,
+              y: 0,
+              opacity: 1,
+            }}
+            exit={{
+              scale: 0.95,
+              y: 16,
+              opacity: 0,
+            }}
+            transition={{
+              type: 'spring',
+              damping: 25,
+              stiffness: 300,
+            }}
             className="w-full max-w-md bg-[#0f172a] border border-white/10 rounded-2xl shadow-2xl shadow-sky-500/20 overflow-hidden relative"
           >
             {/* Top accent bar */}
-            <div className="h-1 bg-gradient-sky w-full" />
+            <div className="h-1 bg-gradient-to-r from-sky-500 to-blue-600 w-full" />
 
+            {/* Background glow */}
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-sky-500/20 blur-3xl rounded-full" />
 
             <div className="p-8 relative z-10">
+
+              {/* Heading */}
               <h2 className="text-2xl font-bold text-white font-outfit mb-1.5 flex items-center gap-2">
-                Welcome <span role="img" aria-label="wave">👋</span>
+                Welcome
+                <span role="img" aria-label="wave">
+                  👋
+                </span>
               </h2>
-              <p className="text-slate-400 text-sm mb-7">A quick intro helps me understand who's visiting.</p>
+
+              <p className="text-slate-400 text-sm mb-7">
+                A quick intro helps me understand who's visiting.
+              </p>
 
               <div className="space-y-5">
+
+                {/* Name */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Your Name</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    Your Name
+                  </label>
+
                   <input
                     type="text"
                     value={name}
-                    onChange={e => setName(e.target.value)}
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="Enter Name"
                     className="w-full px-4 py-3.5 bg-black/30 border border-white/10 rounded-xl text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/30 transition-all shadow-inner"
                   />
                 </div>
 
+                {/* Role */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">You Are</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    You Are
+                  </label>
+
                   <select
                     value={role}
-                    onChange={e => setRole(e.target.value)}
+                    onChange={(e) => setRole(e.target.value)}
                     className="w-full px-4 py-3.5 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/30 transition-all appearance-none text-white [&>option]:bg-[#0f172a] [&>option]:text-white shadow-inner"
                   >
-                    <option value="" disabled>Select your role</option>
-                    <option value="Recruiter">Recruiter</option>
-                    <option value="Developer">Developer</option>
-                    <option value="Student">Student</option>
-                    <option value="Other">Other</option>
+                    <option value="" disabled>
+                      Select your role
+                    </option>
+
+                    <option value="Recruiter">
+                      Recruiter
+                    </option>
+
+                    <option value="Developer">
+                      Developer
+                    </option>
+
+                    <option value="Student">
+                      Student
+                    </option>
+
+                    <option value="Other">
+                      Other
+                    </option>
                   </select>
                 </div>
 
+                {/* Buttons */}
                 <div className="flex gap-3 pt-4">
+
+                  {/* Skip Button */}
                   <motion.button
-                    whileHover={skipReady ? { scale: 1.02 } : {}}
-                    whileTap={skipReady ? { scale: 0.98 } : {}}
+                    whileHover={
+                      skipReady
+                        ? { scale: 1.02 }
+                        : {}
+                    }
+                    whileTap={
+                      skipReady
+                        ? { scale: 0.98 }
+                        : {}
+                    }
                     onClick={() => handleSubmit(true)}
                     disabled={!skipReady}
                     className="flex-1 py-3.5 rounded-xl border border-white/10 bg-white/5 text-slate-400 text-sm font-semibold hover:bg-white/10 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
                   >
                     {skipReady ? 'Skip' : 'Wait...'}
                   </motion.button>
+
+                  {/* Enter Site Button */}
                   <motion.button
-                    whileHover={role ? { scale: 1.02 } : {}}
-                    whileTap={role ? { scale: 0.98 } : {}}
+                    whileHover={
+                      name.trim() && role
+                        ? { scale: 1.02 }
+                        : {}
+                    }
+                    whileTap={
+                      name.trim() && role
+                        ? { scale: 0.98 }
+                        : {}
+                    }
                     onClick={() => handleSubmit(false)}
-                    disabled={!role}
-                    className="flex-1 py-3.5 rounded-xl bg-gradient-sky text-white text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-sky-500/30"
+                    disabled={!name.trim() || !role}
+                    className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-sky-500/30"
                   >
                     Enter Site
                   </motion.button>
+
                 </div>
               </div>
             </div>
